@@ -5,6 +5,7 @@ from datetime import timedelta
 
 from device_config import BASE_CONST
 from channel import ChannelDevice, data_update_list, chart_update_list
+import re
 
 
 BATTERY_TIMEOUT = 30*60
@@ -189,7 +190,7 @@ class WirelessMic(ChannelDevice):
             self.process_audio_bitmap(split[4])
 
     def parse_report(self, split):
-        if split[2] == self.CHCONST['battery']:
+        if x.startswith(self.CHCONST['battery']):
             self.set_battery(split[3])
         elif split[2] == self.CHCONST['runtime']:
             self.set_runtime(split[3])
@@ -201,3 +202,64 @@ class WirelessMic(ChannelDevice):
             self.set_frequency(split[3])
         elif split[2] == self.CHCONST['tx_offset']:
             self.set_tx_offset(split[3])
+
+
+class SennheiserWirelessMic(WirelessMic):
+    def __init__(self, rx, cfg):
+        super().__init__(rx, cfg)
+        self.runtime = '' # No info for Sennheiser
+
+    def set_battery(self, level):
+        if level == '?':
+            level = 255
+        else:
+            level = round(int(level) / 20)
+        self.battery = level
+
+        if 1 <= level <= 5:
+            self.prev_battery = level
+            self.timestamp = time.time()
+
+    def set_rf_level(self, rf_level):
+        rf_level = float(rf_level)
+        rf_level = 100 * (rf_level / 115)
+        self.rf_level = int(rf_level)
+
+    def parse_report(self, split):
+        for x in split:
+            x = x.strip()
+            # if x.startswith(self.CHCONST['battery']):
+            #     self.set_battery(x)
+            if x.startswith(self.CHCONST['runtime']):
+                self.set_runtime(x)
+            elif x.startswith(self.CHCONST['name']):
+                b = re.sub(rf"{self.CHCONST['name']}\s",'',x)
+                self.set_chan_name_raw(b)
+            elif x.startswith(self.CHCONST['quality']):
+                self.set_tx_quality(x)
+            elif x.startswith(self.CHCONST['frequency']):
+                b = re.sub(rf"{self.CHCONST['frequency']}\s",'',x)
+                m = re.search(r"\d{6}",b)
+                if m:
+                    self.set_frequency(m[0])
+            elif x.startswith(self.CHCONST['tx_offset']):
+                self.set_tx_offset(x)
+
+
+    def parse_sample(self, split):
+        # print('Parsing Sample')
+        # print(split)
+        for x in split:
+            if x.startswith('Bat'):
+                self.set_battery(x.split()[1])
+            if x.startswith('AF'):
+                self.set_audio_level(x.split()[1])
+
+            elif x.startswith('RF '):
+                self.set_rf_level(x.split()[1])
+                if x.split()[2] == '1':
+                    self.set_antenna('AX')
+                elif x.split()[2] == '2':
+                    self.set_antenna('XB')
+                else:
+                    self.set_antenna('XX')

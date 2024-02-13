@@ -7,8 +7,10 @@ import logging
 from tornado import websocket, web, ioloop, escape
 
 import shure
+import sennheiser
 import config
 import discover
+import discover_sennheiser
 import offline
 
 
@@ -38,6 +40,7 @@ def micboard_json(network_devices):
     data = []
     discovered = []
     for net_device in network_devices:
+        # print(net_device.net_json())
         data.append(net_device.net_json())
 
     if offline_devices:
@@ -49,6 +52,9 @@ def micboard_json(network_devices):
     url = localURL()
 
     for device in discover.time_filterd_discovered_list():
+        discovered.append(device)
+    
+    for device in discover_sennheiser.time_filterd_discovered_list():
         discovered.append(device)
 
     return json.dumps({
@@ -67,7 +73,8 @@ class AboutHandler(web.RequestHandler):
 class JsonHandler(web.RequestHandler):
     def get(self):
         self.set_header('Content-Type', 'application/json')
-        self.write(micboard_json(shure.NetworkDevices))
+        # self.write(micboard_json(shure.NetworkDevices))
+        self.write(micboard_json(sennheiser.NetworkDevices))
 
 class SocketHandler(websocket.WebSocketHandler):
     clients = set()
@@ -100,10 +107,18 @@ class SocketHandler(websocket.WebSocketHandler):
         if shure.chart_update_list:
             out['chart-update'] = shure.chart_update_list
 
-        if shure.data_update_list:
+        if shure.data_update_list or shure.data_update_list:
             out['data-update'] = []
+
+        if shure.data_update_list:
             for ch in shure.data_update_list:
                 out['data-update'].append(ch.ch_json_mini())
+
+        if sennheiser.data_update_list:
+            print('Senn Data Update List')
+            for ch in sennheiser.data_update_list:
+                out['data-update'].append(ch.ch_json_mini())
+
 
         if config.group_update_list:
             out['group-update'] = config.group_update_list

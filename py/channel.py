@@ -69,20 +69,37 @@ class ChannelDevice:
         return (chan_id, chan_name)
 
     def parse_raw_ch(self, data):
-        split = data.split()
-        self.raw[split[2]] = ' '.join(split[3:])
+        if self.rx.__class__.__name__ == 'ShureNetworkDevice':
+            split = data.split()
+            self.raw[split[2]] = ' '.join(split[3:])
 
-        try:
-            if split[0] == 'SAMPLE' and split[2] == 'ALL':
-                self.parse_sample(split)
-                chart_update_list.append(self.chart_json())
+            try:
+                if split[0] == 'SAMPLE' and split[2] == 'ALL':
+                    self.parse_sample(split)
+                    chart_update_list.append(self.chart_json())
 
-            if split[0] in ['REP', 'REPLY', 'REPORT']:
-                self.parse_report(split)
+                if split[0] in ['REP', 'REPLY', 'REPORT']:
+                    self.parse_report(split)
 
-                if self not in data_update_list:
-                    data_update_list.append(self)
+                    if self not in data_update_list:
+                        data_update_list.append(self)
 
-        except Exception as e:
-            print("Index Error(TX): {}".format(data.split()))
-            print(e)
+            except Exception as e:
+                print("Index Error(TX): {}".format(data.split()))
+                print(e)
+
+        elif self.rx.__class__.__name__ in ('SennheiserNetworkDevice',):
+            split = data.decode('utf-8').split('\r')
+            try:
+                if split[0] == 'Push 0 0 1':
+                    self.parse_report(split)
+
+                    if self not in data_update_list:
+                         data_update_list.append(self)
+                else:
+                    self.parse_sample(split)
+                    chart_update_list.append(self.chart_json())
+
+            except Exception as e:
+                print("Index Error(TX): {}".format(data.split()))
+                print(e)

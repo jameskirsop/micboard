@@ -8,6 +8,7 @@ import time
 from shutil import copyfile
 
 import shure
+import sennheiser
 import offline
 import tornado_server
 
@@ -172,6 +173,10 @@ def reconfig(slots):
     for rx in shure.NetworkDevices:
         rx.socket_connect()
 
+    for rx in sennheiser.NetworkDevices:
+        rx.socket_connect()
+
+
 def get_version_number():
     with open(app_dir('package.json')) as package:
         pkginfo = json.load(package)
@@ -188,6 +193,12 @@ def read_json_config(file):
             if chan['type'] in ['uhfr', 'qlxd', 'ulxd', 'axtd', 'p10t']:
                 netDev = shure.check_add_network_device(chan['ip'], chan['type'])
                 netDev.add_channel_device(chan)
+
+            if chan['type'] in ['ewg3','EM500G3','EM300G3']:
+                # print(f"huzzah: {chan['ip']}!!")
+                netDev = sennheiser.check_add_network_device(chan['ip'], chan['type'])
+                netDev.add_channel_device(chan)
+
 
             elif chan['type'] == 'offline':
                 offline.add_device(chan)

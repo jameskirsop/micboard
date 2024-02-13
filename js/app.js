@@ -23,7 +23,7 @@ import '../node_modules/@ibm/plex/css/ibm-plex.css';
 export const dataURL = 'data.json';
 
 export const micboard = [];
-micboard.MIC_MODELS = ['uhfr', 'qlxd', 'ulxd', 'axtd'];
+micboard.MIC_MODELS = ['uhfr', 'qlxd', 'ulxd', 'axtd','EM500G3','EM300G3'];
 micboard.IEM_MODELS = ['p10t'];
 micboard.url = [];
 micboard.displayMode = 'deskmode';
@@ -223,6 +223,7 @@ function initialMap(callback) {
         micboard.localURL = data.url;
         micboard.groups = groupTableBuilder(data);
         micboard.config = data.config;
+        // console.log(micboard.discovered);
         mapGroups();
 
         if (micboard.config.slots.length < 1) {

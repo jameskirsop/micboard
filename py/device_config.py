@@ -146,3 +146,58 @@ BASE_CONST['p10t'] = {
         'PSM1KTx': 2,
     }
 }
+
+BASE_CONST['EM500G3'] = {
+    'DEVICE_CLASS' : 'SennheiserWirelessMic',
+    'PROTOCOL': 'UDP',
+    'ch_const' : {
+        'battery': 'BATT_BARS',
+        'quality': 'NOT_SUPPORTED',
+        'frequency': 'Frequency',
+        'audio_level': 'AUDIO_LVL',
+        'rf_level': 'RX_RF_LVL',
+        'name': 'Name',
+        'antenna': 'RF_ANTENNA',
+        'tx_offset' : 'TX_OFFSET',
+        'runtime' : 'BATT_RUN_TIME',
+    },
+    'base_const': {
+        'getAll' : ['Push 0 0 1'],
+        # 'query' : [
+        #     '< GET {} CHAN_NAME >',
+        #     '< GET {} BATT_BARS >'
+        # ],
+        'meter_stop' : 'Push 0 0 0'
+    },
+    'DCID_MODEL' : {
+        'ULX-DSingle': 1,
+    }
+}
+
+
+BASE_CONST['EM300G3'] = {
+    'DEVICE_CLASS' : 'SennheiserWirelessMic',
+    'PROTOCOL': 'UDP',
+    'ch_const' : {
+        'battery': 'BATT_BARS',
+        'quality': 'NOT_SUPPORTED',
+        'frequency': 'Frequency',
+        'audio_level': 'AUDIO_LVL',
+        'rf_level': 'RX_RF_LVL',
+        'name': 'Name',
+        'antenna': 'RF_ANTENNA',
+        'tx_offset' : 'TX_OFFSET',
+        'runtime' : 'BATT_RUN_TIME',
+    },
+    'base_const': {
+        'getAll' : ['Push 0 0 1'],
+        # 'query' : [
+        #     '< GET {} CHAN_NAME >',
+        #     '< GET {} BATT_BARS >'
+        # ],
+        'meter_stop' : 'Push 0 0 0'
+    },
+    'DCID_MODEL' : {
+        'ULX-DSingle': 1,
+    }
+}

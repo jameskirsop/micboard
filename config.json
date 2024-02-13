@@ -1,0 +1,57 @@
+{
+  "groups": [
+    {
+      "group": 1,
+      "slots": [
+        1,
+        3,
+        2,
+        4
+      ],
+      "title": "Group 1 Title"
+    },
+    {
+      "group": 2,
+      "slots": [
+        4,
+        3,
+        2,
+        1
+      ],
+      "title": "Group 2 Title"
+    },
+    {
+      "group": 9,
+      "slots": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "title": "Group 9 Title"
+    }
+  ],
+  "micboard_version": "0.8.5",
+  "port": 8058,
+  "slots": [
+    {
+      "channel": 1,
+      "ip": "192.168.0.75",
+      "slot": 1,
+      "type": "EM300G3"
+    },
+    {
+      "channel": 1,
+      "ip": "192.168.0.77",
+      "slot": 2,
+      "type": "EM500G3"
+    },
+    {
+      "channel": 1,
+      "ip": "192.168.0.78",
+      "slot": 3,
+      "type": "EM300G3"
+    }
+  ],
+  "uuid": "ac826c58-b595-4a28-890e-9262dbf5d663"
+}
